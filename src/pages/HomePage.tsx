@@ -1,18 +1,22 @@
-import { useQuery } from '@tanstack/react-query';
-import { getTags } from '../utilities/http-requests';
-import { useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+
+import { useQuery } from '@tanstack/react-query';
+
+import Pagination from '@mui/material/Pagination';
+import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 
 import { sortByFromQueryParams, orderFromQueryParams } from '../utilities/helper-functions';
+import { getTags } from '../utilities/http-requests';
 import { SortType, OrderType } from '../utilities/data-types';
 
 import TagsTable from '../components/table/TagsTable';
-import Pagination from '@mui/material/Pagination';
-import Toolbar from '@mui/material/Toolbar';
+import NumberInput from '../components/numberInput/NumberInput';
+import SelectControl from '../components/selectControl/SelectControl';
+import ToggleOrderBtn from '../components/toggleOrderBtn/ToggleOrderBtn';
 
-import NumberInput from '../components/numberInput/numberInput';
-
-// const query = `?page=${page}&pagesize=${pageSize}&order=${order}&sort=${sortBy}&site=stackoverflow`;
 
 export default function HomePage () {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,18 +36,27 @@ export default function HomePage () {
 
   useEffect(() => {
     setSearchParams({ page: page.toString(), pagesize: pageSize.toString(), order: order, sort: sortBy});
-  }, [page, pageSize, sortBy, setOrder]);
+  }, [page, pageSize, sortBy, order]);
 
   const numberOfPages = (data?.total && data?.page_size) ? Math.ceil(data?.total / data?.page_size) : 10;
 
   const pageChangeHandler = (event: React.ChangeEvent<unknown>, page: number) => setPage(page);
   const pageSizeHandler = (size: number) => setPageSize(size);
+  const sortControlHandler = (value: SortType) => setSortBy(value);
+  const orderControlHandler = (value: OrderType) => setOrder(value);
 
   return (
-    <>
-      <div>Welcome on HOME PAGE</div>
-      <Toolbar>
-        <NumberInput label="Items per page:" min={1} max={100} value={pageSize} onChange={pageSizeHandler}/>
+    <Container maxWidth="md">
+      <Toolbar
+        sx={{gap: "2rem",
+        padding: "1rem",
+        flexDirection: {xs:'column', sm:'row'} }}
+      >
+        <Box display="flex" gap={2} minWidth={320}>
+          <SelectControl label="sort by" value={sortBy} options={['activity', 'name', 'popular']} onChangeValue={sortControlHandler}/>
+          <ToggleOrderBtn value={order} onChangeValue={orderControlHandler}/>
+        </Box>
+        <NumberInput label="Items per page:" min={1} max={100} value={pageSize} onChangeValue={pageSizeHandler}/>
       </Toolbar>
       {data &&
         <div>
@@ -51,6 +64,6 @@ export default function HomePage () {
           <Pagination count={numberOfPages} shape="rounded" onChange={pageChangeHandler} page={page}/>
         </div>
       }
-    </>
+    </Container>
   )
 }

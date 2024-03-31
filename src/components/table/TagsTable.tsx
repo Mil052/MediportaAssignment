@@ -6,15 +6,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Pagination from '@mui/material/Pagination';
 
 import { StackExchangeTag } from '../../utilities/data-types'; 
-
 
 export default function TagsTable ({tags}: {tags: StackExchangeTag[] | undefined | null}) {
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="stack overflow tags table">
+      <Table sx={{ minWidth: 352 }} aria-label="stack overflow tags table">
         <TableHead>
           <TableRow>
             <TableCell>Tag Name</TableCell>
