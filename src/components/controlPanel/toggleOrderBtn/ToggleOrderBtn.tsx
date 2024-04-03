@@ -4,11 +4,11 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Tooltip from '@mui/material/Tooltip';
 
-import { OrderType } from '../../utilities/data-types';
+import { OrderType } from '../../../utilities/data-types';
 
-export default function ToggleOrderBtn({value, onChangeValue}: {value: OrderType , onChangeValue: (value: OrderType ) => void}) {
+export default function ToggleOrderBtn({value, onValueChange}: {value: OrderType , onValueChange: (value: OrderType ) => void}) {
 
-	const handleChange = (event: React.MouseEvent, value: OrderType) => onChangeValue(value);
+	const handleChange = (event: React.MouseEvent, value: OrderType) => onValueChange(value);
 
 	return (
 		<ToggleButtonGroup
@@ -29,5 +29,4 @@ export default function ToggleOrderBtn({value, onChangeValue}: {value: OrderType
 			</Tooltip>
 		</ToggleButtonGroup>
 	);
-
 }

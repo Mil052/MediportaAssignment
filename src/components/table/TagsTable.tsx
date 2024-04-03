@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,8 +10,8 @@ import { StackExchangeTag } from '../../utilities/data-types';
 
 export default function TagsTable ({tags}: {tags: StackExchangeTag[] | undefined | null}) {
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 352 }} aria-label="stack overflow tags table">
+    <TableContainer component={Paper} elevation={3}>
+      <Table sx={{ minWidth: "20rem" }} aria-label="stack overflow tags table">
         <TableHead>
           <TableRow>
             <TableCell>Tag Name</TableCell>

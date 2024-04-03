@@ -1,21 +1,20 @@
 import { useState, useEffect } from 'react';
+
 import { useSearchParams } from 'react-router-dom';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 
 import Pagination from '@mui/material/Pagination';
-import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
 
-import { sortByFromQueryParams, orderFromQueryParams } from '../utilities/helper-functions';
+import { sortFromQueryParams, orderFromQueryParams } from '../utilities/helper-functions';
 import { getTags } from '../utilities/http-requests';
 import { SortType, OrderType } from '../utilities/data-types';
 
+import ControlPanel from '../components/controlPanel/ControlPanel';
 import TagsTable from '../components/table/TagsTable';
-import NumberInput from '../components/numberInput/NumberInput';
-import SelectControl from '../components/selectControl/SelectControl';
-import ToggleOrderBtn from '../components/toggleOrderBtn/ToggleOrderBtn';
+import LoadingInfoBox from '../components/loadingIndicatror/LoadingInfoBox';
+import ErrorInfoBox from '../components/errorIndicator/ErrorInfoBox';
 
 
 export default function HomePage () {
@@ -23,46 +22,51 @@ export default function HomePage () {
   // Set state initial valus according to Query Params (if present)
   const [page, setPage] = useState(searchParams.get('page') ? parseInt(searchParams.get('page')!) : 1 );
   const [pageSize, setPageSize] = useState(searchParams.get('pagesize') ? parseInt(searchParams.get('pagesize')!) : 20);
-  const [sortBy, setSortBy] = useState<SortType>(sortByFromQueryParams(searchParams));
+  const [sort, setSort] = useState<SortType>(sortFromQueryParams(searchParams));
   const [order, setOrder] = useState<OrderType>(orderFromQueryParams(searchParams));
 
-  const {data, isError, failureCount, refetch} = useQuery({
-    queryKey: ['tags', page, pageSize, sortBy, order],
-    queryFn:() => getTags({page: page, pageSize: pageSize, sortBy: sortBy, order: order}),
-    retry: 3,
+  const {data, isPending, isError, refetch} = useQuery({
+    queryKey: ['tags', page, pageSize, sort, order],
+    queryFn:() => getTags({page: page, pageSize: pageSize, sort: sort, order: order}),
+    placeholderData: keepPreviousData, //keep old data until new data is present
+    retry: 2,
     retryDelay: attempt => attempt * 1000,
-    staleTime: 60 * 1000 // caching data for 60 sekund
+    staleTime: 60 * 1000, // caching data for 60 sekund
   });
 
   useEffect(() => {
-    setSearchParams({ page: page.toString(), pagesize: pageSize.toString(), order: order, sort: sortBy});
-  }, [page, pageSize, sortBy, order]);
+    setSearchParams({ page: page.toString(), pagesize: pageSize.toString(), order: order, sort: sort});
+  }, [page, pageSize, sort, order]);
 
   const numberOfPages = (data?.total && data?.page_size) ? Math.ceil(data?.total / data?.page_size) : 10;
 
   const pageChangeHandler = (event: React.ChangeEvent<unknown>, page: number) => setPage(page);
   const pageSizeHandler = (size: number) => setPageSize(size);
-  const sortControlHandler = (value: SortType) => setSortBy(value);
+  const sortControlHandler = (value: SortType) => setSort(value);
   const orderControlHandler = (value: OrderType) => setOrder(value);
 
   return (
-    <Container maxWidth="md">
-      <Toolbar
-        sx={{gap: "2rem",
-        padding: "1rem",
-        flexDirection: {xs:'column', sm:'row'} }}
-      >
-        <Box display="flex" gap={2} minWidth={320}>
-          <SelectControl label="sort by" value={sortBy} options={['activity', 'name', 'popular']} onChangeValue={sortControlHandler}/>
-          <ToggleOrderBtn value={order} onChangeValue={orderControlHandler}/>
-        </Box>
-        <NumberInput label="Items per page:" min={1} max={100} value={pageSize} onChangeValue={pageSizeHandler}/>
-      </Toolbar>
+    <Container maxWidth="md" sx={{display: "flex", flexDirection: "column", gap: "2rem"}}>
+      <ControlPanel
+        sort={sort}
+        changeSortHandler={sortControlHandler}
+        order={order}
+        changeOrderHandler={orderControlHandler}
+        pageSize={pageSize}
+        changePageSizeHandler={pageSizeHandler}
+      />
+      {isError && <ErrorInfoBox retryFetch={refetch}/>}
+      {isPending && <LoadingInfoBox/>}
+      {data && <TagsTable tags={data.items}/>}
       {data &&
-        <div>
-          <TagsTable tags={data.items}/>
-          <Pagination count={numberOfPages} shape="rounded" onChange={pageChangeHandler} page={page}/>
-        </div>
+        <Pagination
+          size="small"
+          count={numberOfPages}
+          shape="rounded"
+          onChange={pageChangeHandler}
+          page={page}
+          sx={{marginX: "auto"}}
+        />
       }
     </Container>
   )

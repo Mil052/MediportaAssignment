@@ -16,6 +16,9 @@ input[type=number] {
   -moz-appearance: textfield;
   border: none;
   outline: none;
+  background-color: transparent;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
 }
 
 body {

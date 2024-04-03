@@ -1,6 +1,6 @@
 import { OrderType, SortType } from "./data-types";
 
-export const sortByFromQueryParams = (searchParams: URLSearchParams) => {
+export const sortFromQueryParams = (searchParams: URLSearchParams) => {
   const sortQuery = searchParams.get('sort');
   if (sortQuery && ["popular", "activity", "name"].includes(sortQuery)) {
     return sortQuery as SortType
