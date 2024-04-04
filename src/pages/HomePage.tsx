@@ -13,8 +13,8 @@ import { SortType, OrderType } from '../utilities/data-types';
 
 import ControlPanel from '../components/controlPanel/ControlPanel';
 import TagsTable from '../components/table/TagsTable';
-import LoadingInfoBox from '../components/loadingIndicatror/LoadingInfoBox';
-import ErrorInfoBox from '../components/errorIndicator/ErrorInfoBox';
+import LoadingInfoBox from '../components/loadingInfoBox/LoadingInfoBox';
+import ErrorInfoBox from '../components/errorInfoBox/ErrorInfoBox';
 
 
 export default function HomePage () {
@@ -25,11 +25,11 @@ export default function HomePage () {
   const [sort, setSort] = useState<SortType>(sortFromQueryParams(searchParams));
   const [order, setOrder] = useState<OrderType>(orderFromQueryParams(searchParams));
 
-  const {data, isPending, isError, refetch} = useQuery({
+  const {data, isPending, isError, error} = useQuery({
     queryKey: ['tags', page, pageSize, sort, order],
     queryFn:() => getTags({page: page, pageSize: pageSize, sort: sort, order: order}),
     placeholderData: keepPreviousData, //keep old data until new data is present
-    retry: 2,
+    retry: 1,
     retryDelay: attempt => attempt * 1000,
     staleTime: 60 * 1000, // caching data for 60 sekund
   });
@@ -45,6 +45,13 @@ export default function HomePage () {
   const sortControlHandler = (value: SortType) => setSort(value);
   const orderControlHandler = (value: OrderType) => setOrder(value);
 
+  const resetPage = () => {
+    setPage(1);
+    setPageSize(20);
+    setSort("popular");
+    setOrder("desc");
+  }
+
   return (
     <Container maxWidth="md" sx={{display: "flex", flexDirection: "column", gap: "2rem"}}>
       <ControlPanel
@@ -55,7 +62,7 @@ export default function HomePage () {
         pageSize={pageSize}
         changePageSizeHandler={pageSizeHandler}
       />
-      {isError && <ErrorInfoBox retryFetch={refetch}/>}
+      {isError && <ErrorInfoBox error={error} resetPage={resetPage}/>}
       {isPending && <LoadingInfoBox/>}
       {data && <TagsTable tags={data.items}/>}
       {data &&

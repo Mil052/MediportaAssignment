@@ -8,13 +8,14 @@ import ToggleOrderBtn from "./toggleOrderBtn/ToggleOrderBtn";
 import { SortType, OrderType } from '../../utilities/data-types';
 
 export default function ControlPanel (
-  {sort, changeSortHandler, order, changeOrderHandler, pageSize, changePageSizeHandler }: {
+  {sort, changeSortHandler, order, changeOrderHandler, pageSize, changePageSizeHandler, backgroundColor }: {
     sort: SortType,
     changeSortHandler: (value: SortType) => void,
     order: OrderType,
     changeOrderHandler: (value: OrderType) => void,
     pageSize: number,
-    changePageSizeHandler: (value: number) => void
+    changePageSizeHandler: (value: number) => void,
+    backgroundColor?: string
   }) {
 
     return (
@@ -23,7 +24,8 @@ export default function ControlPanel (
           gap: "2rem",
           padding: "1rem",
           flexDirection: {xs:'column', sm:'row'},
-          justifyContent: "space-between"
+          justifyContent: "space-between",
+          backgroundColor: backgroundColor
         }}
       >
         <Box 

@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-export default function ErrorInfoBox({retryFetch}: {retryFetch: () => void}) {
+export default function ErrorInfoBox({error, resetPage}: {error?: Error, resetPage: () => void}) {
   return (
     <Box
       display="flex"
@@ -28,14 +28,14 @@ export default function ErrorInfoBox({retryFetch}: {retryFetch: () => void}) {
         component="h2"
         sx={{fontSize: "1rem", lineHeight: "2rem", color: "#A75A5A"}}
       >
-          Oops something went wrong!
+          {error?.message ?? "Oops something went wrong!"}
       </Typography>
       <Button
         variant="contained"
         sx={{bgcolor: "#A75A5A"}}
-        onClick={() => retryFetch()}
+        onClick={() => resetPage()}
       >
-        TRY AGAIN
+        RESET PAGE
       </Button>
     </Box>
   ) 

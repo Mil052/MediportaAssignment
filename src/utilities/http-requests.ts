@@ -6,17 +6,24 @@ export async function getTags ({page = 1, pageSize = 20, sort = "popular", order
   page: number, pageSize: number, sort: SortType, order: OrderType
 }) {
   const query = `?page=${page}&pagesize=${pageSize}&order=${order}&sort=${sort}&site=stackoverflow`;
-  const apiDataFilter = '&filter=!4-C9.H1YNh.sprLn2'; // get only name and count values for Tags - https://api.stackexchange.com/docs/tags
+  // Filter to get only name and count values for Tags ( https://api.stackexchange.com/docs/tags):
+  const apiDataFilter = '&filter=!4-C9.H1YNh.sprLn2'; 
+  const url = stackExchangeTagsGetUrl + query + apiDataFilter;
 
-  // const response = await fetch(stackExchangeTagsGetUrl + query + apiDataFilter);  <- real query
+  const response = await fetch(url);
 
-  const response = await fetch('/tagApiResponseMockup.json'); // <- Mockup of Data from Stack Exchange Api
+  // Data Mockup:
+  // const response = await fetch('/tagApiResponseMockup.json');
+
+  const responseData = await response.json();
 
   if (!response.ok) {
-      throw new Error("An error occurred. Can't get tags data from Stack Exchange.");
-  }
-  const responseData = await response.json();
-  console.log(responseData);
+      const errorMessage = responseData.error_id === 403
+        ? "Acces denied. Page above 25 requires access token or app key."
+        : "An error occurred. Can't get tags data from Stack Exchange.";
 
+      throw new Error(errorMessage);
+  }
+  
   return responseData as StackExchangeTagsApiResponse;
 } 

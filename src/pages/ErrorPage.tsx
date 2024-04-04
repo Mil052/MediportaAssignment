@@ -4,21 +4,20 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 
+const ArrowLink = styled(Link) ({
+  textAlign: "center",
+  fontSize: "24px",
+  display: "block",
+  textDecoration: "none",
+  lineHeight: "32px",
+  color: "#1976d2",
+  marginTop: "4rem",
+  '& .arrow-link_arrow': {fontSize: "32px", marginLeft: "1rem"},
+  '&:hover': {transform: "scale(1.2)", textShadow: "1px 2px 3px rgba(0, 0, 0, 0.3)"},
+  '&:active': {transform: "scale(1.0)", textShadow: "none"}
+});
+
 export default function ErrorPage () {
-
-  const ArrowLink = styled(Link) ({
-    textAlign: "center",
-    fontSize: "24px",
-    display: "block",
-    textDecoration: "none",
-    lineHeight: "32px",
-    color: "#1976d2",
-    marginTop: "4rem",
-    '& .arrow-link_arrow': {fontSize: "32px", marginLeft: "1rem"},
-    '&:hover': {transform: "scale(1.2)", textShadow: "1px 2px 3px rgba(0, 0, 0, 0.3)"},
-    '&:active': {transform: "scale(1.0)", textShadow: "none"}
-  });
-
   return (
     <Container
       maxWidth="sm"
